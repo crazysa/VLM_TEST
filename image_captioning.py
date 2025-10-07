@@ -81,7 +81,8 @@ class ImageCaptioner:
 def main():
     captioner = ImageCaptioner()
     
-    sample_image = "https://images.unsplash.com/photo-1574158622682-e40e69881006"
+    # sample_image = "https://images.unsplash.com/photo-1574158622682-e40e69881006"
+    sample_image = "/home/shub/Pictures/Screenshots/Screenshot from 2025-10-07 15-48-57.png"
     caption = captioner.generate_caption(sample_image)
     print(f"Caption: {caption}")
 

@@ -1,5 +1,6 @@
-from transformers import AutoProcessor, AutoModelForVision2Seq, AutoModelForCausalLM, LlavaForConditionalGeneration
+from transformers import AutoProcessor, AutoModelForVision2Seq, BitsAndBytesConfig
 from config import config
+import torch
 
 class VLMLoader:
     def __init__(self):
@@ -11,46 +12,32 @@ class VLMLoader:
         model_kwargs = {
             'cache_dir': self.config.cache_dir,
             'torch_dtype': self.config.torch_dtype,
-            'device_map': 'auto' if self.config.device == 'cuda' else None,
         }
         
-        if self.config.load_in_8bit:
+        if self.config.load_in_4bit:
+            quantization_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch.float16,
+                bnb_4bit_use_double_quant=True,
+            )
+            model_kwargs['quantization_config'] = quantization_config
+            model_kwargs['device_map'] = 'auto'
+        elif self.config.load_in_8bit:
             model_kwargs['load_in_8bit'] = True
-        elif self.config.load_in_4bit:
-            model_kwargs['load_in_4bit'] = True
-            
-        try:
-            self.processor = AutoProcessor.from_pretrained(
-                self.config.model_name,
-                cache_dir=self.config.cache_dir
-            )
-        except Exception as e:
-            print(f"Failed to load with AutoProcessor: {e}")
-            from transformers import LlavaProcessor
-            self.processor = LlavaProcessor.from_pretrained(
-                self.config.model_name,
-                cache_dir=self.config.cache_dir
-            )
+            model_kwargs['device_map'] = 'auto'
+        elif self.config.device == 'cuda':
+            model_kwargs['device_map'] = 'auto'
         
-        try:
-            if 'llava' in self.config.model_name.lower():
-                self.model = LlavaForConditionalGeneration.from_pretrained(
-                    self.config.model_name,
-                    **model_kwargs
-                )
-            else:
-                self.model = AutoModelForVision2Seq.from_pretrained(
-                    self.config.model_name,
-                    **model_kwargs
-                )
-        except Exception:
-            self.model = AutoModelForCausalLM.from_pretrained(
-                self.config.model_name,
-                **model_kwargs
-            )
+        self.processor = AutoProcessor.from_pretrained(
+            self.config.model_name,
+            cache_dir=self.config.cache_dir
+        )
         
-        if not model_kwargs.get('device_map') and self.config.device == 'cuda':
-            self.model = self.model.to(self.config.device)
+        self.model = AutoModelForVision2Seq.from_pretrained(
+            self.config.model_name,
+            **model_kwargs
+        )
         
         return self.processor, self.model
     
@@ -61,11 +48,10 @@ class VLMLoader:
         }
         
         if self.config.do_sample:
-            gen_config.update({
-                'temperature': self.config.temperature,
-                'top_p': self.config.top_p,
-                'top_k': self.config.top_k,
-            })
+            gen_config['temperature'] = self.config.temperature
+            gen_config['top_p'] = self.config.top_p
+            if self.config.top_k is not None:
+                gen_config['top_k'] = self.config.top_k
         
         if self.config.num_beams > 1:
             gen_config['num_beams'] = self.config.num_beams
@@ -73,4 +59,3 @@ class VLMLoader:
         return gen_config
 
 loader = VLMLoader()
-
