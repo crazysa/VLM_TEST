@@ -84,7 +84,8 @@ class ConversationalVLM:
 def main():
     vlm = ConversationalVLM()
     
-    sample_image = "https://images.unsplash.com/photo-1574158622682-e40e69881006"
+    # sample_image = "https://images.unsplash.com/photo-1574158622682-e40e69881006"
+    sample_image = "/home/shub/Pictures/Screenshots/Screenshot from 2025-10-07 15-48-57.png"
     
     response1 = vlm.chat(sample_image, "What do you see in this image?", reset_history=True)
     print(f"Q1: What do you see in this image?")

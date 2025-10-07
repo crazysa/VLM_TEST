@@ -24,7 +24,7 @@ class MultiImageReasoner:
         image2 = self.load_image(image_path2)
         
         if question is None:
-            question = "What are the similarities and differences between these two images?"
+            question = "Describe the changes in vehicle positions between these two images?"
         
         prompt = f"USER: <image>\n<image>\n{question}\nASSISTANT:"
         
@@ -94,8 +94,10 @@ class MultiImageReasoner:
 def main():
     reasoner = MultiImageReasoner()
     
-    sample_image1 = "https://images.unsplash.com/photo-1574158622682-e40e69881006"
-    sample_image2 = "https://images.unsplash.com/photo-1543466835-00a7907e9de1"
+    # sample_image1 = "https://images.unsplash.com/photo-1574158622682-e40e69881006"
+    # sample_image2 = "https://images.unsplash.com/photo-1543466835-00a7907e9de1"
+    sample_image1 = "/home/shub/Pictures/Screenshots/Screenshot from 2025-10-07 15-48-57.png"
+    sample_image2 = "/home/shub/Pictures/Screenshots/Screenshot from 2025-10-07 17-25-47.png"
     
     comparison = reasoner.compare_images(sample_image1, sample_image2)
     print("Image Comparison:")

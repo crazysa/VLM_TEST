@@ -89,8 +89,9 @@ class VisualQA:
 def main():
     vqa = VisualQA()
     
-    sample_image = "https://images.unsplash.com/photo-1574158622682-e40e69881006"
-    question = "What animal is in the image?"
+    # sample_image = "https://images.unsplash.com/photo-1574158622682-e40e69881006"
+    sample_image = "/home/shub/Pictures/Screenshots/Screenshot from 2025-10-07 15-48-57.png"
+    question = "How many vehicles are in the image and what color and where in the image are they?"
     answer = vqa.answer_question(sample_image, question)
     print(f"Q: {question}")
     print(f"A: {answer}")

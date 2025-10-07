@@ -74,7 +74,8 @@ class ImageAnalyzer:
 def main():
     analyzer = ImageAnalyzer()
     
-    sample_image = "https://images.unsplash.com/photo-1574158622682-e40e69881006"
+    # sample_image = "https://images.unsplash.com/photo-1574158622682-e40e69881006"
+    sample_image = "/home/shub/Pictures/Screenshots/Screenshot from 2025-10-07 15-48-57.png"
     
     print("Object Detection:")
     print(analyzer.detect_objects(sample_image))
